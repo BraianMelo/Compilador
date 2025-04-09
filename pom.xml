@@ -44,8 +44,8 @@
             <configuration>
                 <mainClass>com.braian.App</mainClass>
                 <arguments>
-                    <argument>ola</argument>
-                </arguments>
+                    <argument>/home/braian/Downloads/Codigo.jm</argument>
+                </arguments>o
             </configuration>
         </plugin>
     </plugins>

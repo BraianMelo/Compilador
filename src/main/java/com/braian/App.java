@@ -1,9 +1,11 @@
 package com.braian;
 
+import java.io.File;
+
 /*
  * Copyright (c) 2025 Braian
  *
- * Licensed under the "Licença de Uso Restrito Pessoal".
+ * Licensed under a "Licença de Uso Restrito Pessoal".
  * Leonardo Ribeiro, atualmente matriculado no curso de Ciência da Computação da UFSJ,
  * está explicitamente proibido de usar, modificar ou redistribuir este código.
  *
@@ -16,45 +18,30 @@ import com.braian.lexico.AnalisadorLexico;
 
 public class App {
 	
-    public static void main( String[] args ) {
-    	
-    	Scanner sc = new Scanner(System.in, "UTF-8");
-    
-    	
-    	try {
-    		
-    		if(args.length != 1) {
-    			throw new IllegalArgumentException("Precisa informar o caminho do arquivo");
-    		}
-    		
-    		AnalisadorLexico analisador = new AnalisadorLexico("☕ x = 10;\n"
-    				+ "☕y = 5;\n"
-    				+ "\n"
-    				+ "🖨️ x;\n"
-    				+ "🖨️ y;\n"
-    				+ "\n"
-    				+ "❓(x == y)\n"
-    				+ "✅ y = y + 1;\n"
-    				+ "❌ y = x;\n"
-    				+ "\n"
-    				+ "🆕 soma(a, b) {\n"
-    				+ "  🚚 a + b;\n"
-    				+ "}\n"
-    				+ "\n"
-    				+ "🔁 (i = 0; i < 10; i = i + 1) {\n"
-    				+ "  🖨️ i;\n"
-    				+ "  🛑;\n"
-    				+ "}\n"
-    				+ "");
-    		
-    		analisador.imprimirTokens();
-    		
-    	} catch (Exception e ) {
-    		System.out.println("ERRO: "+ e.getMessage());
-    		
-    	} finally {
-			sc.close();
-			
-		}
+    public static void main(String[] args) {
+        Scanner sc = null;
+
+        try {
+            if (args.length != 1) {
+                throw new IllegalArgumentException("Precisa informar o caminho do arquivo");
+            }
+
+            File arquivo = new File(args[0]);
+            sc = new Scanner(arquivo);
+            StringBuilder codigo = new StringBuilder();
+
+            while (sc.hasNextLine()) {
+                codigo.append(sc.nextLine());
+            }
+
+            AnalisadorLexico analisador = new AnalisadorLexico(codigo.toString());
+            analisador.imprimirTokens();
+
+        } catch (Exception e) {
+            System.out.println("ERRO: " + e.getMessage());
+        } finally {
+            if (sc != null)
+                sc.close();
+        }
     }
 }
