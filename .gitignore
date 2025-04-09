@@ -1,0 +1,29 @@
+# Arquivos específicos do Eclipse
+.classpath
+.project
+.settings/
+
+# Diretório de compilação padrão do Eclipse
+bin/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Arquivos gerados
+*.class
+
+# IntelliJ (caso use eventualmente)
+.idea/
+*.iml
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+build/
+
