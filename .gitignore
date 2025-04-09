@@ -16,14 +16,8 @@ Thumbs.db
 # Arquivos gerados
 *.class
 
-# IntelliJ (caso use eventualmente)
-.idea/
-*.iml
-
 # Maven
 target/
 
-# Gradle
-.gradle/
-build/
+
 

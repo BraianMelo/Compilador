@@ -1,0 +1,29 @@
+LICENÇA DE USO RESTRITO
+
+Copyright (c) 2025 Braian
+
+Este software é disponibilizado gratuitamente para uso, modificação e distribuição, 
+desde que sejam respeitadas as condições descritas abaixo:
+
+1. PERMISSÃO DE USO  
+   É concedida permissão, gratuita e irrestrita, a qualquer pessoa para utilizar, 
+   copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender cópias 
+   do software, sujeito às condições expressas nesta licença.
+
+2. RESTRIÇÃO INDIVIDUAL  
+   Fica expressamente proibido o uso, acesso, redistribuição ou qualquer tipo de 
+   aproveitamento direto ou indireto deste software por parte do indivíduo **Leonardo Ribeiro**, 
+   regularmente matriculado no curso de Ciência da Computação, independentemente de 
+   instituição ou vínculo acadêmico atual. Esta restrição é pessoal, intransferível 
+   e irrevogável, válida para quaisquer versões, cópias, derivações ou adaptações deste software.
+
+3. LIMITAÇÃO DE RESPONSABILIDADE  
+   Este software é fornecido "no estado em que se encontra", sem garantias de qualquer tipo, 
+   expressas ou implícitas, incluindo, mas não se limitando a, garantias de comercialização, 
+   adequação a um propósito específico e ausência de defeitos. Em nenhuma hipótese o autor 
+   será responsabilizado por quaisquer danos decorrentes do uso deste software.
+
+4. ACEITAÇÃO DOS TERMOS  
+   O uso deste software implica na aceitação integral e irrestrita dos termos desta licença. 
+   O descumprimento de qualquer cláusula aqui descrita resultará na imediata revogação da 
+   permissão de uso.

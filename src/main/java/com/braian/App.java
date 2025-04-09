@@ -1,5 +1,15 @@
 package com.braian;
 
+/*
+ * Copyright (c) 2025 Braian
+ *
+ * Licensed under the "Licença de Uso Restrito Pessoal".
+ * Leonardo Ribeiro, atualmente matriculado no curso de Ciência da Computação da UFSJ,
+ * está explicitamente proibido de usar, modificar ou redistribuir este código.
+ *
+ * Veja o arquivo LICENSE.txt para mais detalhes.
+ */
+
 import java.util.Scanner;
 
 import com.braian.lexico.AnalisadorLexico;
