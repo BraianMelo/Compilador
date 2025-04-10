@@ -22,6 +22,7 @@ public class App {
         Scanner sc = null;
 
         try {
+        	
             if (args.length != 1) {
                 throw new IllegalArgumentException("Precisa informar o caminho do arquivo");
             }
@@ -39,9 +40,11 @@ public class App {
 
         } catch (Exception e) {
             System.out.println("ERRO: " + e.getMessage());
+            
         } finally {
             if (sc != null)
                 sc.close();
+            
         }
     }
 }

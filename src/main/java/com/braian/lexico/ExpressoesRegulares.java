@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 
 public class ExpressoesRegulares {
 
-    public record RegraToken(Pattern padrao, TipoToken tipo) {}
-
     public static final List<RegraToken> REGRAS = List.of(
         // Emojis - palavras-chave
         new RegraToken(Pattern.compile("^☕"), TipoToken.DECLARACAO_VARIAVEL),
@@ -17,20 +15,20 @@ public class ExpressoesRegulares {
         new RegraToken(Pattern.compile("^🔁"), TipoToken.ESTRUTURA_FOR),
         new RegraToken(Pattern.compile("^🛑"), TipoToken.INSTRUCAO_BREAK),
         new RegraToken(Pattern.compile("^🆕"), TipoToken.DECLARACAO_FUNCAO),
-        new RegraToken(Pattern.compile("^🚚"), TipoToken.RETORNO_FUNCAO),
+        new RegraToken(Pattern.compile("^🔚"), TipoToken.RETORNO_FUNCAO),
 
         // Operadores
-        new RegraToken(Pattern.compile("^=="), TipoToken.IGUAL_IGUAL),
-        new RegraToken(Pattern.compile("^="), TipoToken.IGUAL),
-        new RegraToken(Pattern.compile("^!="), TipoToken.DIFERENTE),
-        new RegraToken(Pattern.compile("^>="), TipoToken.MAIOR_IGUAL),
-        new RegraToken(Pattern.compile("^<="), TipoToken.MENOR_IGUAL),
-        new RegraToken(Pattern.compile("^>"), TipoToken.MAIOR),
-        new RegraToken(Pattern.compile("^<"), TipoToken.MENOR),
-        new RegraToken(Pattern.compile("^\\+"), TipoToken.MAIS),
-        new RegraToken(Pattern.compile("^-"), TipoToken.MENOS),
-        new RegraToken(Pattern.compile("^\\*"), TipoToken.MULTIPLICACAO),
-        new RegraToken(Pattern.compile("^/"), TipoToken.DIVISAO),
+        new RegraToken(Pattern.compile("^=="), TipoToken.OP_IGUAL_IGUAL),
+        new RegraToken(Pattern.compile("^="), TipoToken.OP_IGUAL),
+        new RegraToken(Pattern.compile("^!="), TipoToken.OP_DIFERENTE),
+        new RegraToken(Pattern.compile("^>="), TipoToken.OP_MAIOR_IGUAL),
+        new RegraToken(Pattern.compile("^<="), TipoToken.OP_MENOR_IGUAL),
+        new RegraToken(Pattern.compile("^>"), TipoToken.OP_MAIOR),
+        new RegraToken(Pattern.compile("^<"), TipoToken.OP_MENOR),
+        new RegraToken(Pattern.compile("^\\+"), TipoToken.OP_MAIS),
+        new RegraToken(Pattern.compile("^-"), TipoToken.OP_MENOS),
+        new RegraToken(Pattern.compile("^\\*"), TipoToken.OP_MULTIPLICACAO),
+        new RegraToken(Pattern.compile("^/"), TipoToken.OP_DIVISAO),
 
         // Delimitadores
         new RegraToken(Pattern.compile("^\\("), TipoToken.ABRE_PARENTESE),

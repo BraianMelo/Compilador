@@ -31,21 +31,22 @@ public class AnalisadorLexico {
     private void escanearToken() {
         String restante = codigo.substring(posicao);
 
-        for (ExpressoesRegulares.RegraToken regra : ExpressoesRegulares.REGRAS) {
-            Matcher matcher = regra.padrao().matcher(restante);
+        for (RegraToken regra : ExpressoesRegulares.REGRAS) { // Procura se o char bate com alguma regra
+        	
+            Matcher matcher = regra.getPadrao().matcher(restante);
 
             if (matcher.find()) {
                 String lexema = matcher.group();
 
                 // Se for nulo, ignorar (comentário, espaço, etc)
-                if (regra.tipo() != null) {
+                if (regra.getTipo() != null) {
                     Object literal = null;
 
-                    if (regra.tipo() == TipoToken.NUMERO) {
+                    if (regra.getTipo() == TipoToken.NUMERO) {
                         literal = Integer.parseInt(lexema);
                     }
 
-                    Token token = new Token(regra.tipo(), lexema, literal, linha, coluna);
+                    Token token = new Token(regra.getTipo(), lexema, literal, linha, coluna);
                     tokens.add(token);
                 }
 
@@ -55,8 +56,10 @@ public class AnalisadorLexico {
                 if (linhasPuladas > 0) {
                     linha += linhasPuladas;
                     coluna = lexema.length() - lexema.lastIndexOf("\n");
+                    
                 } else {
                     coluna += lexema.length();
+                    
                 }
 
                 posicao += lexema.length();
@@ -76,10 +79,14 @@ public class AnalisadorLexico {
     }
 
     private int contarQuebrasDeLinha(String texto) {
-        int count = 0;
-        for (char c : texto.toCharArray()) {
-            if (c == '\n') count++;
+        int contador = 0;
+        
+        for (char letra : texto.toCharArray()) {
+       
+            if (letra == '\n')
+            	++contador;   
         }
-        return count;
+        
+        return contador;
     }
 }

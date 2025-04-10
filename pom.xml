@@ -45,7 +45,7 @@
                 <mainClass>com.braian.App</mainClass>
                 <arguments>
                     <argument>/home/braian/Downloads/Codigo.jm</argument>
-                </arguments>o
+                </arguments>
             </configuration>
         </plugin>
     </plugins>

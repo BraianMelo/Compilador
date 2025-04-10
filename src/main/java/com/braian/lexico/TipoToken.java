@@ -11,23 +11,23 @@ public enum TipoToken {
 	ESTRUTURA_FOR, // 🔁 for
 	INSTRUCAO_BREAK, // 🛑 break
 	DECLARACAO_FUNCAO, // 🆕 def
-	RETORNO_FUNCAO, // 🚚​ return​
+	RETORNO_FUNCAO, // 🔚​ return​
 
 	// 📦 Identificadores e literais
 	IDENTIFICADOR, NUMERO,
 
 	// ➕ Operadores
-	IGUAL, // =
-	IGUAL_IGUAL, // ==
-	DIFERENTE, // !=
-	MAIOR, // >
-	MENOR, // <
-	MAIOR_IGUAL, // >=
-	MENOR_IGUAL, // <=
-	MAIS, // +
-	MENOS, // -
-	MULTIPLICACAO, // *
-	DIVISAO, // /
+	OP_IGUAL, // =
+	OP_IGUAL_IGUAL, // ==
+	OP_DIFERENTE, // !=
+	OP_MAIOR, // >
+	OP_MENOR, // <
+	OP_MAIOR_IGUAL, // >=
+	OP_MENOR_IGUAL, // <=
+	OP_MAIS, // +
+	OP_MENOS, // -
+	OP_MULTIPLICACAO, // *
+	OP_DIVISAO, // /
 
 	// 📐 Delimitadores e símbolos
 	ABRE_PARENTESE, // (
