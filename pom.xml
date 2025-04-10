@@ -44,7 +44,7 @@
             <configuration>
                 <mainClass>com.braian.App</mainClass>
                 <arguments>
-                    <argument>/home/braian/Downloads/Codigo.jm</argument>
+                    <argument>src/test/resource/Programa.jm</argument>
                 </arguments>
             </configuration>
         </plugin>

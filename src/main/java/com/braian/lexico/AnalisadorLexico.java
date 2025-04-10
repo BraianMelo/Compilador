@@ -1,11 +1,16 @@
 package com.braian.lexico;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import com.braian.io.ArquivoIO;
+
 public class AnalisadorLexico {
 
+	private final ArquivoIO arquivoIO;
+	
     private final String codigo;
     private final List<Token> tokens = new ArrayList<>();
     private int linha = 1;
@@ -14,18 +19,25 @@ public class AnalisadorLexico {
 
     public AnalisadorLexico(String codigo) {
         this.codigo = codigo;
+        arquivoIO = new ArquivoIO();
     }
 
-    public void imprimirTokens() {
+    public List<Token> analiseLexica() throws IOException {
         while (!EOF()) {
             escanearToken();
         }
 
         tokens.add(new Token(TipoToken.EOF, "", null, linha, coluna));
 
+        StringBuilder sb = new StringBuilder();
+        
         for (Token token : tokens) {
-            System.out.println(token);
+            sb.append(token + "\n");
         }
+        
+        arquivoIO.escreverArquivo("output/AnaliseLexica.txt", sb.toString());
+        
+        return tokens;
     }
 
     private void escanearToken() {
