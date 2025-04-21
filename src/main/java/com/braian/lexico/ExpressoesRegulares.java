@@ -37,10 +37,14 @@ public class ExpressoesRegulares {
         new RegraToken(Pattern.compile("^\\}"), TipoToken.FECHA_CHAVE),
         new RegraToken(Pattern.compile("^,"), TipoToken.VIRGULA),
         new RegraToken(Pattern.compile("^;"), TipoToken.PONTO_VIRGULA),
+        new RegraToken(Pattern.compile("^\\."), TipoToken.PONTO),
 
         // Literais
+        new RegraToken(Pattern.compile("^[0-9]+\\.[0-9]+"), TipoToken.DECIMAl),
         new RegraToken(Pattern.compile("^\\d+"), TipoToken.NUMERO),
         new RegraToken(Pattern.compile("^[a-zA-Z_][a-zA-Z_0-9]*"), TipoToken.IDENTIFICADOR),
+
+
 
         // Comentário e espaços (ignorados)
         new RegraToken(Pattern.compile("^//.*"), null),

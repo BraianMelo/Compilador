@@ -12,7 +12,9 @@ public class AnalisadorLexico {
 	private final ArquivoIO arquivoIO;
 	
     private final String codigo;
+    
     private final List<Token> tokens = new ArrayList<>();
+    
     private int linha = 1;
     private int coluna = 1;
     private int posicao = 0;
@@ -24,7 +26,7 @@ public class AnalisadorLexico {
 
     public List<Token> analiseLexica() throws IOException {
         while (!EOF()) {
-            escanearToken();
+            escanearTokens();
         }
 
         tokens.add(new Token(TipoToken.EOF, "", null, linha, coluna));
@@ -40,7 +42,7 @@ public class AnalisadorLexico {
         return tokens;
     }
 
-    private void escanearToken() {
+    private void escanearTokens() {
         String restante = codigo.substring(posicao);
 
         for (RegraToken regra : ExpressoesRegulares.REGRAS) { // Procura se o char bate com alguma regra
@@ -79,11 +81,21 @@ public class AnalisadorLexico {
             }
         }
 
-        // Se nenhuma regra bateu
-        String caractereInvalido = codigo.substring(posicao, posicao + 1);
+        // Se nenhuma regra bateu:
+        int codePoint = codigo.codePointAt(posicao);
+        String caractereInvalido = new String(Character.toChars(codePoint));
         tokens.add(new Token(TipoToken.ERRO, caractereInvalido, null, linha, coluna));
-        posicao++;
+        
+        StringBuilder erro = new StringBuilder();
+        erro.append("ERRO: '" + caractereInvalido +"' não foi reconhecido! \n");
+        erro.append("Linha: " + linha + " | Coluna: " + coluna);
+        
+        System.out.println(erro.toString());
+        
+        posicao += Character.charCount(codePoint);
         coluna++;
+
+        
     }
 
     private boolean EOF() {

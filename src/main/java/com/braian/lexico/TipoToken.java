@@ -14,7 +14,7 @@ public enum TipoToken {
 	RETORNO_FUNCAO, // 🔚​ return​
 
 	// 📦 Identificadores e literais
-	IDENTIFICADOR, NUMERO,
+	IDENTIFICADOR, NUMERO, DECIMAl,
 
 	// ➕ Operadores
 	OP_IGUAL, // =
@@ -36,6 +36,7 @@ public enum TipoToken {
 	FECHA_CHAVE, // }
 	VIRGULA, // ,
 	PONTO_VIRGULA, // ;
+	PONTO,
 
 	// 🧯 Outros
 	EOF, // Fim do arquivo
