@@ -1,17 +1,17 @@
-🆕 soma(a, b) {
- let resultado = a + b;
- 🔚;
- }
-💩
-☕ x = 10;
-☕ y = 5.5;
 
-❓(x > y)
-✅ y = y + 1;
-❌ y = x;
+🆕 int fatorial(int n) {			💭 calcula o fatorial de um número
 
-🔁(x < 100)
-✅ {
-    x = x + 1;
-    🛑;
+    ☕ int resultado = 1;
+    ☕ int i = 1;
+
+    ⏳ (i <= n) {
+        resultado *= i;
+        i++;
+    }
+
+    🔚 resultado;					💭 Retorna o resultado final
 }
+
+☕ int numero = 5;
+☕ int resultado = fatorial(numero);
+🖨️("O fatorial de " + numero + " é " + resultado);
