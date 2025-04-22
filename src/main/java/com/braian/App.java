@@ -3,7 +3,6 @@ package com.braian;
 /*
  * Copyright (c) 2025 Braian Melo
  * Veja o arquivo LICENSE.txt para mais detalhes.
- * 
  */
 
 import java.util.Scanner;
