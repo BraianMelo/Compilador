@@ -13,7 +13,7 @@ O **JavaMoji** é uma linguagem de programação que utiliza **emojis** como pal
 │   └── 📂 main
 │       └── 📂 java
 │           └── 📂 com.braian
-│               ├── App.java                # Classe principal
+│               ├── App.java                       # Classe principal
 │               ├── 📂 io
 │               │   ├── AnalisadoresIO.java        # Interface para I/O dos analisadores
 │               │   ├── ArquivosIO.java            # Leitura e escrita em arquivos
@@ -29,7 +29,8 @@ O **JavaMoji** é uma linguagem de programação que utiliza **emojis** como pal
 └── README.md                                      # Documentação do projeto
 ```
 
----
+___
+
 
 ## 🚀 Requisitos
 
@@ -38,7 +39,8 @@ Antes de compilar ou executar o projeto, certifique-se de ter o seguinte instala
 - **Java JDK 21+**
 - **Apache Maven**
 
----
+___
+
 
 ## ⚙️ Como Compilar e Executar
 
@@ -61,14 +63,23 @@ mvn compile
 mvn exec:java
 ```
 
-### Observações
-O código aceita como entrada o caminho do arquivo que deve ser compilado. Como estamos usando o **Maven**, o argumento padrão está definido no '*pom.xml*'. Caso queira compilar outro arquivo, será necessário alterar esse argumento diretamente no *pom.xml*.
-
 4. **Sáida do programa:**
 
 As análises léxicas e sintáticas estarão nos arquivos na pasta *output/*. Apenas os erros serão mostrados pelo terminal.
+
+### Observações
+O código aceita como entrada o caminho do arquivo que deve ser compilado. Como estamos usando o **Maven**, o argumento padrão está definido no '*pom.xml*'. Caso queira compilar outro arquivo, será necessário alterar esse argumento diretamente no *pom.xml*.
+
+```bash
+<configuration>
+    <arguments>
+        <argument>src/texemplo.txt</argument>
+    </arguments>
+</configuration>
+```
  
----
+___
+
 ## 💡 Funcionalidades Implementadas
 Até o momento, apenas as seguintes funcionalidades foram implementadas:
 
@@ -100,15 +111,35 @@ Abaixo estão alguns dos emojis usados no projeto.
 | ⏳    | ESTRUTURA WHILE                    |
 | ⏩    | INSTRUCAO CONTINUE                 |
 
----
+___
+
+## Código de JavaMoji
+Aqui abaixo está um exemplo de um código em JavaMoji
+```bash
+☕ numero = 10;
+
+❓ numero > 5
+✅{
+    🖨️ "Maior que 5";
+
+} ❌ {
+    🖨️ "Menor ou igual a 5";
+
+^}
+```
+___
+
 
 ## 👨‍💻 Autor
 
-Braian - Estudante de Ciência da Computação  
+Braian: [GitHub](https://github.com/BraianMelo)
+
 **Instituição:** UFSJ
+
 **Período:** 6º
 
----
+___
+
 
 ## 📂 Licença
 
