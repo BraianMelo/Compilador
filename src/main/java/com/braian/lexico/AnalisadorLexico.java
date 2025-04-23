@@ -84,9 +84,23 @@ public class AnalisadorLexico {
         String caractereInvalido = new String(Character.toChars(codePoint));
 
         Token erroToken = new Token(TipoToken.ERRO, caractereInvalido, null, linha, coluna);
+        
+        if(!tokens.isEmpty()) {
+        	if(tokens.getLast().getLinha() == linha && tokens.getLast().getColuna() + 1 == coluna) { 
+        		// Significa o caractere anterior está errado. Ele ignora o erro seguinte até achar um
+        		// caracter válido
+        		
+        		posicao += Character.charCount(codePoint);
+                coluna++;
+                return;
+        	}
+        }
         tokens.add(erroToken);
 
-        analisadorLexicoIO.imprimirErro("Token inválido: '" + erroToken.getLexema() + "' na linha " + erroToken.getLinha() + ", coluna " + erroToken.getColuna());
+        analisadorLexicoIO.imprimirErro(
+        		"Token inválido: '" + erroToken.getLexema() + 
+        		"' na linha " + erroToken.getLinha() + 
+        		", coluna " + erroToken.getColuna());
 
         posicao += Character.charCount(codePoint);
         coluna++;
