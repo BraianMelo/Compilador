@@ -23,7 +23,7 @@ public class AnalisadorLexicoIO implements AnalisadoresIO {
         StringBuilder rodape = new StringBuilder();
         
         rodape.append("+----------------------------------------------+\n");
-        rodape.append("|              Análise Finalizada!             |\n");
+        rodape.append("|               Análise Finalizada!            |\n");
         rodape.append("+----------------------------------------------+");
         
         System.out.println(rodape.toString());

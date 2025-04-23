@@ -29,8 +29,8 @@ public class App {
             analisador.analiseLexica();
 
         } catch (Exception e) {
-            System.out.println("ERRO: " + e.getMessage());
-            
+            System.out.println("+ ERRO: " + e.getMessage());
+
         } finally {
             if (sc != null)
                 sc.close();
