@@ -1,5 +1,7 @@
 package com.braian;
 
+import java.util.List;
+
 /*
  * Copyright (c) 2025 Braian Melo
  * Veja o arquivo LICENSE.txt para mais detalhes.
@@ -9,13 +11,20 @@ import java.util.Scanner;
 
 import com.braian.io.ArquivoIO;
 import com.braian.lexico.AnalisadorLexico;
+import com.braian.lexico.Token;
+import com.braian.sintatico.AnalisadorSintatico;
 
 public class App {
 	
     public static void main(String[] args) {
     	
-        Scanner sc = null;
+    	List<Token> listaDeTokens;
+  
+        
         ArquivoIO arquivoIO = new ArquivoIO();
+        AnalisadorLexico lexico;
+        AnalisadorSintatico sintatico;
+        
 
         try {
         	
@@ -25,15 +34,16 @@ public class App {
 
             String codigo = arquivoIO.lerArquivo(args[0]);
             
-            AnalisadorLexico analisador = new AnalisadorLexico(codigo.toString());
-            analisador.analiseLexica();
+            lexico = new AnalisadorLexico(codigo.toString());
+            listaDeTokens = lexico.analiseLexica();
+            
+            sintatico = new AnalisadorSintatico();
+            
 
         } catch (Exception e) {
             System.out.println("+ ERRO: " + e.getMessage());
 
         } finally {
-            if (sc != null)
-                sc.close();
             
         }
     }

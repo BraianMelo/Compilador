@@ -125,7 +125,7 @@ Aqui abaixo está um exemplo de um código em JavaMoji
 } ❌ {
     🖨️ "Menor ou igual a 5";
 
-^}
+}
 ```
 ___
 

@@ -41,7 +41,7 @@ public class AnalisadorLexico {
         }
         
         if(erroEncontrado) {
-        	throw new InputMismatchException("Caracteres inválidos encontrados!");
+        	throw new InputMismatchException("o código possui alguns erros léxicos!");
         }
 
         analisadorLexicoIO.imprimirFim();
@@ -69,6 +69,13 @@ public class AnalisadorLexico {
                     }
 
                     Token token = new Token(regra.getTipo(), lexema, literal, linha, coluna);
+                    
+                    if(regra.getTipo() == TipoToken.IDENTIFICADOR && (tokens.getLast().getTipo() == TipoToken.NUMERO)) {
+                    	imprimirErro(token);
+                    	erroEncontrado = true;
+                    	
+                    }
+                    
                     tokens.add(token);
                 }
 
@@ -125,10 +132,24 @@ public class AnalisadorLexico {
     
     // Imprime o erro no terminal com o AnalisadorLexicoIO
     private void imprimirErro(Token erro) {
-    	analisadorLexicoIO.imprimirErro(
-        		"Caracter inválido: '" + erro.getLexema() + 
-        		"' na linha " + erro.getLinha() + 
-        		", coluna " + erro.getColuna());
+    	
+    	switch(erro.getTipo()) {
+    	case IDENTIFICADOR:
+    		analisadorLexicoIO.imprimirErro(
+            		"Identificador inválido: '" + tokens.getLast().getLexema() + erro.getLexema() + 
+            		"' na linha " + erro.getLinha() + 
+            		", coluna " + erro.getColuna()); 
+    		break;
+    		
+    	default:
+    		analisadorLexicoIO.imprimirErro(
+            		"Caracter inválido: '" + erro.getLexema() + 
+            		"' na linha " + erro.getLinha() + 
+            		", coluna " + erro.getColuna()); 
+    		break;
+    	}
+
+    
     }
     
     // Salva a lista de tokens com o ArquivoIO

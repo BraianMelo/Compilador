@@ -59,7 +59,7 @@ public enum TipoToken {
     OP_OR,                       // ||
     OP_NOT,                      // !
 
-    // Separadores/delimitadores
+    // Separadores
     SE_ABRE_PARENTESE,           // (
     SE_FECHA_PARENTESE,          // )
     SE_ABRE_CHAVE,               // {
@@ -68,7 +68,7 @@ public enum TipoToken {
     SE_PONTO_VIRGULA,            // ;
     SE_PONTO,                    // .
 
-    // Identificadores e literais
+    // Identificadores
     IDENTIFICADOR,
     NUMERO,
     DECIMAl,

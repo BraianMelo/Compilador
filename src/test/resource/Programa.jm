@@ -1,8 +1,7 @@
-
 🆕 int fatorial(int n) {			💭 calcula o fatorial de um número
 
     ☕ int resultado = 1;
-    ☕ int i = 1;
+    ☕ int = 1;
 
     ⏳ (i <= n) {
         resultado *= i;
@@ -11,8 +10,7 @@
 
     🔚 resultado;					💭 Retorna o resultado final
 }
-   🌳​🪴​😨​​
+
 ☕ int numero = 5;
 ☕ int resultado = fatorial(numero);
 🖨️("O fatorial de " + numero + " é " + resultado);
-🎰​🌳​🪴​😨​
