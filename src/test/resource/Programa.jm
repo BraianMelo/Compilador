@@ -1,11 +1,17 @@
+❓(10 == 10) ✅ {
+
+} ❌ {
+
+}
+
 🆕 int fatorial(int n) {			💭 calcula o fatorial de um número
 
     ☕ int resultado = 1;
-    ☕ int = 1;
+    ☕ int i = 1;
 
     ⏳ (i <= n) {
-        resultado *= i;
-        i++;
+        resultado = resultado * i;
+        i = i + 1;
     }
 
     🔚 resultado;					💭 Retorna o resultado final

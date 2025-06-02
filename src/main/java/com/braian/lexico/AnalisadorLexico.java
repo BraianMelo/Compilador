@@ -26,7 +26,7 @@ public class AnalisadorLexico {
         this.codigo = codigo;
     }
 
-    public List<Token> analiseLexica() throws IOException {
+    public List<Token> analisar() throws IOException {
         analisadorLexicoIO.imprimirInicio(); 
 
         while (!EOF()) {

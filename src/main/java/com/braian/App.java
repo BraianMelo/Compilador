@@ -20,12 +20,10 @@ public class App {
     	
     	List<Token> listaDeTokens;
   
-        
         ArquivoIO arquivoIO = new ArquivoIO();
         AnalisadorLexico lexico;
         AnalisadorSintatico sintatico;
-        
-
+      
         try {
         	
             if (args.length != 1) {
@@ -35,9 +33,10 @@ public class App {
             String codigo = arquivoIO.lerArquivo(args[0]);
             
             lexico = new AnalisadorLexico(codigo.toString());
-            listaDeTokens = lexico.analiseLexica();
+            listaDeTokens = lexico.analisar();
             
             sintatico = new AnalisadorSintatico();
+            sintatico.analisar(listaDeTokens);
             
 
         } catch (Exception e) {
