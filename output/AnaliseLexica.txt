@@ -59,7 +59,6 @@
 [IDENTIFICADOR, 'numero', null, 20, 7]
 [OP_IGUAL, '=', null, 20, 14]
 [NUMERO, '5', 5, 20, 16]
-[SE_PONTO_VIRGULA, ';', null, 20, 17]
 [PC_DECLARACAO_VARIAVEL, '☕', null, 21, 1]
 [PC_TIPO_INTEIRO, 'int', null, 21, 3]
 [IDENTIFICADOR, 'resultado', null, 21, 7]

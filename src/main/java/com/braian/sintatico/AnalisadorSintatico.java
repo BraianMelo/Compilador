@@ -1,258 +1,533 @@
 package com.braian.sintatico;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Iterator;
 
-import com.braian.lexico.Token;
+import com.braian.io.AnalisadoresIO;
+import com.braian.io.ArquivoIO;
 import com.braian.lexico.TipoToken;
+import com.braian.lexico.Token;
 
 public class AnalisadorSintatico {
-
-    private Iterator<Token> tokens;
-    private Token atual;
-
-    public void analisar(List<Token> listaDeTokens) throws Exception {
-        this.tokens = listaDeTokens.iterator();
-        avancar();
-
-        while (atual.getTipo() != TipoToken.EOF) {
-           declaracao();
-        }
-    }
-
-    private void declaracao() throws Exception {
-    	 switch(atual.getTipo()) {
-         	case PC_DECLARACAO_FUNCAO:
-         		declaracaoFuncao();
-         		break;
-         		
-         	case PC_DECLARACAO_VARIAVEL:
-         		declaracaoVariavel();
-         		break;
-         	
-         	case IDENTIFICADOR:
-         		atribuicao();
-         		break;
-         		
-         	case PC_ESTRUTURA_WHILE:
-         		estruturaWhile();
-         		break;
-         	
-         	case PC_CONDICIONAL_IF:
-         		estruturaCondicional();
-         		break;
-         		
-         	default:
-         		comando();
-         
-         }
-    }
-
-    private void declaracaoVariavel() throws Exception {
-    	avancar();
-    	
-    	switch(atual.getTipo()) {
-	    	case PC_TIPO_INTEIRO:
-	    	case PC_TIPO_DOUBLE:
-	    	case PC_TIPO_FLOAT:
-	    	case PC_TIPO_LONG:
-	    	case PC_TIPO_SHORT:
-	    	case PC_TIPO_STRING:
-	    		avancar();
-	    		break;
-	    	default:
-	    		 throw new Exception("Token inesperado (encontrado: " + atual.getLexema() + ", linha " + atual.getLinha() + ")");
-    		
-    	}
-    	
-        consumir(TipoToken.IDENTIFICADOR, "Esperado nome da variável.");
-        if (verifica(TipoToken.OP_IGUAL)) {
-            avancar();
-            expressao();
-        }
-        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';' após declaração.");
-    }
+	
+    private List<Token> tokens;
+    private int posicao;
+    private Token tokenAtual;
     
-    private void atribuicao() throws Exception {
-    	avancar();
-    	
-        consumir(TipoToken.OP_IGUAL, "Esperado '=' após atribuição.");
+    private final StringBuilder relatorio = new StringBuilder();
+    private final AnalisadoresIO io = new AnalisadoresIO();
+    private boolean erroSintaticoEncontrado = false;
+    private NoArvoreSintatica raizArvore;
+
+    public void analisar(List<Token> tokens) throws IOException {
+        this.tokens = tokens;
+        this.posicao = 0;
+        this.tokenAtual = tokens.isEmpty() ? null : tokens.get(0);
+        this.erroSintaticoEncontrado = false;
+        relatorio.setLength(0);
         
-        expressao();
-
-        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';' após declaração.");
-    }
-    
-    private void estruturaCondicional() throws Exception {
-        consumir(TipoToken.PC_CONDICIONAL_IF, "Esperado '❓'.");
-        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '(' após '❓'.");
+        io.imprimirCabecalho("Analisador Sintático");
+        raizArvore = new NoArvoreSintatica("Programa");
         
-        expressao();
+        programa();
         
-        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')' após condição.");
-        consumir(TipoToken.PC_BLOCO_VERDADEIRO, "Esperado '✅' após condição.");
-        bloco();
-
-        if (verifica(TipoToken.PC_BLOCO_FALSO)) {
-            avancar();
-            bloco();
-            
-        }
-    }
-    
-    private void declaracaoFuncao() throws Exception {
-    	avancar();
-        consumir(TipoToken.PC_TIPO_INTEIRO, "Esperado tipo de retorno.");
-        consumir(TipoToken.IDENTIFICADOR, "Esperado nome da função.");
-        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '(' após o nome da função.");
-        parametros();
-        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')' após parâmetros.");
-        bloco();
-    }
-
-
-    private void parametros() throws Exception {
-        if (verifica(TipoToken.PC_TIPO_INTEIRO)) {
-            avancar(); // tipo
-            consumir(TipoToken.IDENTIFICADOR, "Esperado nome do parâmetro.");
-        }
-    }
-
-    private void bloco() throws Exception {
-        consumir(TipoToken.SE_ABRE_CHAVE, "Esperado '{' no início do bloco.");
-        while (!verifica(TipoToken.SE_FECHA_CHAVE) && atual.getTipo() != TipoToken.EOF) {
-            declaracao();
-        }
-        consumir(TipoToken.SE_FECHA_CHAVE, "Esperado '}' no fim do bloco.");
-    }
-
-    private void comando() throws Exception {
-        if (verifica(TipoToken.PC_ESTRUTURA_WHILE)) {
-            estruturaWhile();
-        } else if (verifica(TipoToken.PC_RETORNO_FUNCAO)) {
-            retorno();
-        } else if (verifica(TipoToken.PC_IMPRIMIR)) {
-            imprimir();
+        relatorio.append("\nÁrvore Sintática:\n");
+        relatorio.append(raizArvore.toString());
+        relatorio.append("\nAnálise sintática ");
+        
+        if (erroSintaticoEncontrado) {
+            relatorio.append("concluída com erros.");
+            io.imprimirErro("A análise sintática encontrou erros!");
+            io.imprimirRodape(true);
         } else {
-            expressao();
-            consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';' após comando.");
+            relatorio.append("concluída com sucesso!");
+            io.imprimirRodape(false);
         }
-    }
-
-    private void estruturaWhile() throws Exception {
-    	avancar();
-        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '(' após while.");
-        expressao();
-        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')' após condição.");
-        bloco();
-    }
-
-    private void retorno() throws Exception {
-        consumir(TipoToken.PC_RETORNO_FUNCAO, null);
-        expressao();
-        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';' após retorno.");
-    }
-
-    private void imprimir() throws Exception {
-        consumir(TipoToken.PC_IMPRIMIR, null);
-        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '(' após 🖨️.");
-        expressao();
-        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')' após expressão.");
-        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';' após 🖨️.");
-    }
-
-    private void expressao() throws Exception {
-        expressaoLogica();
-    }
-
-    private void expressaoLogica() throws Exception {
-        expressaoIgualdade();
-        while (verifica(TipoToken.OP_AND) || verifica(TipoToken.OP_OR)) {
-            avancar();
-            expressaoIgualdade();
-        }
-    }
-
-    private void expressaoIgualdade() throws Exception {
-        expressaoRelacional();
-        while (verifica(TipoToken.OP_IGUAL_IGUAL) || verifica(TipoToken.OP_DIFERENTE)) {
-            avancar();
-            expressaoRelacional();
-        }
-    }
-
-    private void expressaoRelacional() throws Exception {
-        expressaoAditiva();
-        while (verifica(TipoToken.OP_MAIOR) || verifica(TipoToken.OP_MENOR) ||
-               verifica(TipoToken.OP_MAIOR_IGUAL) || verifica(TipoToken.OP_MENOR_IGUAL)) {
-            avancar();
-            expressaoAditiva();
-        }
-    }
-
-    private void expressaoAditiva() throws Exception {
-        expressaoMultiplicativa();
-        while (verifica(TipoToken.OP_MAIS) || verifica(TipoToken.OP_MENOS)) {
-            avancar();
-            expressaoMultiplicativa();
-        }
-    }
-
-    private void expressaoMultiplicativa() throws Exception {
-        expressaoUnaria();
-        while (verifica(TipoToken.OP_MULTIPLICACAO) || verifica(TipoToken.OP_DIVISAO)) {
-            avancar();
-            expressaoUnaria();
-        }
-    }
-
-    private void expressaoUnaria() throws Exception {
-        if (verifica(TipoToken.OP_NOT) || verifica(TipoToken.OP_MENOS)) {
-            avancar();
-            expressaoUnaria();
-        } else {
-            expressaoPrimaria();
-        }
-    }
-
-    private void expressaoPrimaria() throws Exception {
-        if (verifica(TipoToken.NUMERO) || verifica(TipoToken.TEXTO) || verifica(TipoToken.PC_VERDADEIRO) || verifica(TipoToken.PC_FALSO)) {
-            avancar();
-        } else if (verifica(TipoToken.IDENTIFICADOR)) {
-            avancar();
-            if (verifica(TipoToken.SE_ABRE_PARENTESE)) { // chamada de função
-                avancar();
-                if (!verifica(TipoToken.SE_FECHA_PARENTESE)) {
-                    expressao(); // argumento(s)
-                }
-                consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')' após chamada de função.");
-            }
-        } else if (verifica(TipoToken.SE_ABRE_PARENTESE)) {
-            avancar();
-            expressao();
-            consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')' após expressão.");
-        } else {
-            throw new Exception("Expressão primária inválida na linha " + atual.getLinha());
-        }
-    }
-
-
-    private boolean verifica(TipoToken tipo) {
-        return atual.getTipo() == tipo;
+        
+        salvarRelatorioEmArquivo();
     }
 
     private void avancar() {
-        if (tokens.hasNext()) {
-            atual = tokens.next();
+        posicao++;
+        if (posicao < tokens.size()) {
+            tokenAtual = tokens.get(posicao);
+        } else {
+            tokenAtual = null;
         }
     }
 
-    private void consumir(TipoToken tipoEsperado, String mensagemErro) throws Exception {
-        if (verifica(tipoEsperado)) {
+    private boolean verificar(TipoToken tipo) {
+        return tokenAtual != null && tokenAtual.getTipo() == tipo;
+    }
+
+    private void consumir(TipoToken tipoEsperado, String mensagemErro) {
+        if (tokenAtual == null) {
+            reportarErro("Fim inesperado do arquivo. " + mensagemErro);
+            return;
+        }
+        
+        if (tokenAtual.getTipo() == tipoEsperado) {
+            relatorio.append("[S] Token esperado encontrado: ")
+                     .append(tipoEsperado)
+                     .append(" ('").append(tokenAtual.getLexema()).append("')")
+                     .append(" na linha ").append(tokenAtual.getLinha())
+                     .append(", coluna ").append(tokenAtual.getColuna())
+                     .append("\n");
+            avancar();
+            
+        } else {
+            reportarErro(mensagemErro + ". Encontrado: " + 
+                         tokenAtual.getTipo() + " ('" + tokenAtual.getLexema() + "')");
+        }
+    }
+
+    private void reportarErro(String mensagem) {
+        erroSintaticoEncontrado = true;
+        String erro = "ERRO SINTÁTICO [Linha " + tokenAtual.getLinha() + 
+                      ", Coluna " + tokenAtual.getColuna() + "]: " + mensagem;
+        relatorio.append("[E] ").append(erro).append("\n");
+        io.imprimirErro(erro);
+    }
+
+    private void programa() {
+        NoArvoreSintatica noDeclaracoes = new NoArvoreSintatica("Declarações");
+        raizArvore.adicionarFilho(noDeclaracoes);
+        
+        while (tokenAtual != null && tokenAtual.getTipo() != TipoToken.EOF) {
+            if (verificar(TipoToken.PC_DECLARACAO_VARIAVEL) || 
+                verificar(TipoToken.PC_DECLARACAO_FUNCAO)) {
+                NoArvoreSintatica noDeclaracao = declaracao();
+                noDeclaracoes.adicionarFilho(noDeclaracao);
+            } else {
+                NoArvoreSintatica noComando = comando();
+                noDeclaracoes.adicionarFilho(noComando);
+            }
+        }
+        consumir(TipoToken.EOF, "Esperado fim de arquivo");
+    }
+
+    private NoArvoreSintatica declaracao() {
+        if (verificar(TipoToken.PC_DECLARACAO_VARIAVEL)) {
+            return declaracaoVariavel();
+        } else if (verificar(TipoToken.PC_DECLARACAO_FUNCAO)) {
+            return declaracaoFuncao();
+        } else {
+            reportarErro("Esperado declaração de variável ou função");
+            return new NoArvoreSintatica("DeclaraçãoInválida");
+        }
+    }
+
+    private NoArvoreSintatica declaracaoVariavel() {
+        NoArvoreSintatica noDeclVar = new NoArvoreSintatica("DeclaraçãoVariável");
+        
+        consumir(TipoToken.PC_DECLARACAO_VARIAVEL, "Esperado '☕'");
+        noDeclVar.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        NoArvoreSintatica noTipo = tipo();
+        noDeclVar.adicionarFilho(noTipo);
+        
+        consumir(TipoToken.IDENTIFICADOR, "Esperado identificador");
+        noDeclVar.adicionarFilho(new NoArvoreSintatica("Identificador", tokenAtual));
+        
+        if (verificar(TipoToken.OP_IGUAL)) {
+            avancar();
+            NoArvoreSintatica noExpressao = expressao();
+            NoArvoreSintatica noAtribuicao = new NoArvoreSintatica("Atribuição");
+            noAtribuicao.adicionarFilho(noExpressao);
+            noDeclVar.adicionarFilho(noAtribuicao);
+        }
+        
+        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';'");
+        noDeclVar.adicionarFilho(new NoArvoreSintatica("PontoVírgula", tokenAtual));
+        
+        return noDeclVar;
+    }
+
+    private NoArvoreSintatica tipo() {
+        NoArvoreSintatica noTipo = new NoArvoreSintatica("Tipo");
+        if (verificar(TipoToken.PC_TIPO_INTEIRO) || 
+            verificar(TipoToken.PC_TIPO_SHORT) ||
+            verificar(TipoToken.PC_TIPO_LONG) ||
+            verificar(TipoToken.PC_TIPO_FLOAT) ||
+            verificar(TipoToken.PC_TIPO_DOUBLE) ||
+            verificar(TipoToken.PC_TIPO_STRING) ||
+            verificar(TipoToken.PC_TIPO_BOOLEANO)) {
+            noTipo.adicionarFilho(new NoArvoreSintatica("TipoDado", tokenAtual));
             avancar();
         } else {
-            throw new Exception((mensagemErro != null ? mensagemErro : "Token inesperado") +
-                    " (encontrado: " + atual.getLexema() + ", linha " + atual.getLinha() + ")");
+            reportarErro("Esperado tipo de dado");
         }
+        return noTipo;
+    }
+
+    private NoArvoreSintatica declaracaoFuncao() {
+        NoArvoreSintatica noDeclFuncao = new NoArvoreSintatica("DeclaraçãoFunção");
+        
+        consumir(TipoToken.PC_DECLARACAO_FUNCAO, "Esperado '🆕'");
+        noDeclFuncao.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        NoArvoreSintatica noTipo = tipo();
+        noDeclFuncao.adicionarFilho(noTipo);
+        
+        consumir(TipoToken.IDENTIFICADOR, "Esperado nome da função");
+        noDeclFuncao.adicionarFilho(new NoArvoreSintatica("NomeFunção", tokenAtual));
+        
+        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '('");
+        noDeclFuncao.adicionarFilho(new NoArvoreSintatica("AbreParentese", tokenAtual));
+        
+        // Parâmetros
+        if (!verificar(TipoToken.SE_FECHA_PARENTESE)) {
+            NoArvoreSintatica noParametros = parametros();
+            noDeclFuncao.adicionarFilho(noParametros);
+        }
+        
+        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')'");
+        noDeclFuncao.adicionarFilho(new NoArvoreSintatica("FechaParentese", tokenAtual));
+        
+        NoArvoreSintatica noBloco = bloco();
+        noDeclFuncao.adicionarFilho(noBloco);
+        
+        return noDeclFuncao;
+    }
+
+    private NoArvoreSintatica parametros() {
+        NoArvoreSintatica noParametros = new NoArvoreSintatica("Parâmetros");
+        do {
+            NoArvoreSintatica noParametro = new NoArvoreSintatica("Parâmetro");
+            
+            NoArvoreSintatica noTipo = tipo();
+            noParametro.adicionarFilho(noTipo);
+            
+            consumir(TipoToken.IDENTIFICADOR, "Esperado identificador do parâmetro");
+            noParametro.adicionarFilho(new NoArvoreSintatica("Identificador", tokenAtual));
+            
+            noParametros.adicionarFilho(noParametro);
+            
+            if (verificar(TipoToken.SE_VIRGULA)) {
+                avancar();
+                noParametros.adicionarFilho(new NoArvoreSintatica("Vírgula", tokenAtual));
+            } else {
+                break;
+            }
+        } while (true);
+        return noParametros;
+    }
+
+    private NoArvoreSintatica bloco() {
+        NoArvoreSintatica noBloco = new NoArvoreSintatica("Bloco");
+        
+        consumir(TipoToken.SE_ABRE_CHAVE, "Esperado '{'");
+        noBloco.adicionarFilho(new NoArvoreSintatica("AbreChave", tokenAtual));
+        
+        while (tokenAtual != null && 
+               !verificar(TipoToken.SE_FECHA_CHAVE) && 
+               !verificar(TipoToken.EOF)) {
+            NoArvoreSintatica noComando = comando();
+            noBloco.adicionarFilho(noComando);
+        }
+        
+        consumir(TipoToken.SE_FECHA_CHAVE, "Esperado '}'");
+        noBloco.adicionarFilho(new NoArvoreSintatica("FechaChave", tokenAtual));
+        
+        return noBloco;
+    }
+
+    private NoArvoreSintatica comando() {
+        if (verificar(TipoToken.PC_IMPRIMIR)) {
+            return comandoImprimir();
+        } else if (verificar(TipoToken.PC_CONDICIONAL_IF)) {
+            return comandoIf();
+        } else if (verificar(TipoToken.PC_ESTRUTURA_WHILE)) {
+            return comandoWhile();
+        } else if (verificar(TipoToken.PC_RETORNO_FUNCAO)) {
+            return comandoReturn();
+        } else if (verificar(TipoToken.PC_DECLARACAO_VARIAVEL)) {
+            return declaracaoVariavel();
+        } else if (verificar(TipoToken.SE_ABRE_CHAVE)) {
+            return bloco();
+        } else if (verificar(TipoToken.IDENTIFICADOR)) {
+            return comandoAtribuicao();
+        } else {
+            reportarErro("Comando inválido");
+            avancar();
+            return new NoArvoreSintatica("ComandoInválido");
+        }
+    }
+
+    private NoArvoreSintatica comandoImprimir() {
+        NoArvoreSintatica noImprimir = new NoArvoreSintatica("ComandoImprimir");
+        
+        consumir(TipoToken.PC_IMPRIMIR, "Esperado '🖨️'");
+        noImprimir.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '('");
+        noImprimir.adicionarFilho(new NoArvoreSintatica("AbreParentese", tokenAtual));
+        
+        NoArvoreSintatica noExpressao = expressao();
+        noImprimir.adicionarFilho(noExpressao);
+        
+        while (verificar(TipoToken.SE_VIRGULA)) {
+            avancar();
+            noImprimir.adicionarFilho(new NoArvoreSintatica("Vírgula", tokenAtual));
+            noExpressao = expressao();
+            noImprimir.adicionarFilho(noExpressao);
+        }
+        
+        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')'");
+        noImprimir.adicionarFilho(new NoArvoreSintatica("FechaParentese", tokenAtual));
+        
+        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';'");
+        noImprimir.adicionarFilho(new NoArvoreSintatica("PontoVírgula", tokenAtual));
+        
+        return noImprimir;
+    }
+
+    private NoArvoreSintatica comandoIf() {
+        NoArvoreSintatica noIf = new NoArvoreSintatica("ComandoIf");
+        
+        consumir(TipoToken.PC_CONDICIONAL_IF, "Esperado '❓'");
+        noIf.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '('");
+        noIf.adicionarFilho(new NoArvoreSintatica("AbreParentese", tokenAtual));
+        
+        NoArvoreSintatica noCondicao = expressao();
+        noIf.adicionarFilho(new NoArvoreSintatica("Condição"));
+        noIf.adicionarFilho(noCondicao);
+        
+        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')'");
+        noIf.adicionarFilho(new NoArvoreSintatica("FechaParentese", tokenAtual));
+        
+        consumir(TipoToken.PC_BLOCO_VERDADEIRO, "Esperado '✅'");
+        noIf.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        NoArvoreSintatica noBlocoIf = bloco();
+        noIf.adicionarFilho(noBlocoIf);
+        
+        if (verificar(TipoToken.PC_BLOCO_FALSO)) {
+            avancar();
+            noIf.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+            
+            NoArvoreSintatica noBlocoElse = bloco();
+            noIf.adicionarFilho(noBlocoElse);
+        }
+        
+        return noIf;
+    }
+
+    private NoArvoreSintatica comandoWhile() {
+        NoArvoreSintatica noWhile = new NoArvoreSintatica("ComandoWhile");
+        
+        consumir(TipoToken.PC_ESTRUTURA_WHILE, "Esperado '⏳'");
+        noWhile.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        consumir(TipoToken.SE_ABRE_PARENTESE, "Esperado '('");
+        noWhile.adicionarFilho(new NoArvoreSintatica("AbreParentese", tokenAtual));
+        
+        NoArvoreSintatica noCondicao = expressao();
+        noWhile.adicionarFilho(new NoArvoreSintatica("Condição"));
+        noWhile.adicionarFilho(noCondicao);
+        
+        consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')'");
+        noWhile.adicionarFilho(new NoArvoreSintatica("FechaParentese", tokenAtual));
+        
+        NoArvoreSintatica noBloco = bloco();
+        noWhile.adicionarFilho(noBloco);
+        
+        return noWhile;
+    }
+
+    private NoArvoreSintatica comandoReturn() {
+        NoArvoreSintatica noReturn = new NoArvoreSintatica("ComandoReturn");
+        
+        consumir(TipoToken.PC_RETORNO_FUNCAO, "Esperado '🔚'");
+        noReturn.adicionarFilho(new NoArvoreSintatica("PalavraChave", tokenAtual));
+        
+        if (!verificar(TipoToken.SE_PONTO_VIRGULA)) {
+            NoArvoreSintatica noExpressao = expressao();
+            noReturn.adicionarFilho(noExpressao);
+        }
+        
+        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';'");
+        noReturn.adicionarFilho(new NoArvoreSintatica("PontoVírgula", tokenAtual));
+        
+        return noReturn;
+    }
+
+    private NoArvoreSintatica comandoAtribuicao() {
+        NoArvoreSintatica noAtribuicao = new NoArvoreSintatica("ComandoAtribuição");
+        
+        consumir(TipoToken.IDENTIFICADOR, "Esperado identificador");
+        noAtribuicao.adicionarFilho(new NoArvoreSintatica("Identificador", tokenAtual));
+        
+        consumir(TipoToken.OP_IGUAL, "Esperado '='");
+        noAtribuicao.adicionarFilho(new NoArvoreSintatica("Operador", tokenAtual));
+        
+        NoArvoreSintatica noExpressao = expressao();
+        noAtribuicao.adicionarFilho(noExpressao);
+        
+        consumir(TipoToken.SE_PONTO_VIRGULA, "Esperado ';'");
+        noAtribuicao.adicionarFilho(new NoArvoreSintatica("PontoVírgula", tokenAtual));
+        
+        return noAtribuicao;
+    }
+
+    private NoArvoreSintatica expressao() {
+        return expressaoLogica();
+    }
+
+    private NoArvoreSintatica expressaoLogica() {
+        NoArvoreSintatica noExpressao = expressaoComparacao();
+        
+        while (verificar(TipoToken.OP_AND) || verificar(TipoToken.OP_OR)) {
+            Token operador = tokenAtual;
+            avancar();
+            NoArvoreSintatica noDireita = expressaoComparacao();
+            
+            NoArvoreSintatica noOperacao = new NoArvoreSintatica("OperaçãoLógica");
+            noOperacao.adicionarFilho(noExpressao);
+            noOperacao.adicionarFilho(new NoArvoreSintatica("Operador", operador));
+            noOperacao.adicionarFilho(noDireita);
+            
+            noExpressao = noOperacao;
+        }
+        
+        return noExpressao;
+    }
+
+    private NoArvoreSintatica expressaoComparacao() {
+        NoArvoreSintatica noExpressao = expressaoAditiva();
+        
+        while (verificar(TipoToken.OP_IGUAL_IGUAL) || 
+               verificar(TipoToken.OP_DIFERENTE) ||
+               verificar(TipoToken.OP_MAIOR) ||
+               verificar(TipoToken.OP_MAIOR_IGUAL) ||
+               verificar(TipoToken.OP_MENOR) ||
+               verificar(TipoToken.OP_MENOR_IGUAL)) {
+            Token operador = tokenAtual;
+            avancar();
+            NoArvoreSintatica noDireita = expressaoAditiva();
+            
+            NoArvoreSintatica noOperacao = new NoArvoreSintatica("OperaçãoComparação");
+            noOperacao.adicionarFilho(noExpressao);
+            noOperacao.adicionarFilho(new NoArvoreSintatica("Operador", operador));
+            noOperacao.adicionarFilho(noDireita);
+            
+            noExpressao = noOperacao;
+        }
+        
+        return noExpressao;
+    }
+
+    private NoArvoreSintatica expressaoAditiva() {
+        NoArvoreSintatica noExpressao = expressaoMultiplicativa();
+        
+        while (verificar(TipoToken.OP_MAIS) || verificar(TipoToken.OP_MENOS)) {
+            Token operador = tokenAtual;
+            avancar();
+            NoArvoreSintatica noDireita = expressaoMultiplicativa();
+            
+            NoArvoreSintatica noOperacao = new NoArvoreSintatica("OperaçãoAditiva");
+            noOperacao.adicionarFilho(noExpressao);
+            noOperacao.adicionarFilho(new NoArvoreSintatica("Operador", operador));
+            noOperacao.adicionarFilho(noDireita);
+            
+            noExpressao = noOperacao;
+        }
+        
+        return noExpressao;
+    }
+
+    private NoArvoreSintatica expressaoMultiplicativa() {
+        NoArvoreSintatica noExpressao = expressaoPrimaria();
+        
+        while (verificar(TipoToken.OP_MULTIPLICACAO) || verificar(TipoToken.OP_DIVISAO)) {
+            Token operador = tokenAtual;
+            avancar();
+            NoArvoreSintatica noDireita = expressaoPrimaria();
+            
+            NoArvoreSintatica noOperacao = new NoArvoreSintatica("OperaçãoMultiplicativa");
+            noOperacao.adicionarFilho(noExpressao);
+            noOperacao.adicionarFilho(new NoArvoreSintatica("Operador", operador));
+            noOperacao.adicionarFilho(noDireita);
+            
+            noExpressao = noOperacao;
+        }
+        
+        return noExpressao;
+    }
+
+    private NoArvoreSintatica expressaoPrimaria() {
+        if (verificar(TipoToken.IDENTIFICADOR)) {
+            Token identificador = tokenAtual;
+            avancar();
+            
+            if (verificar(TipoToken.SE_ABRE_PARENTESE)) {
+                NoArvoreSintatica noChamada = new NoArvoreSintatica("ChamadaFunção");
+                noChamada.adicionarFilho(new NoArvoreSintatica("Identificador", identificador));
+                
+                avancar();
+                noChamada.adicionarFilho(new NoArvoreSintatica("AbreParentese", tokenAtual));
+                
+                if (!verificar(TipoToken.SE_FECHA_PARENTESE)) {
+                    NoArvoreSintatica noArgumentos = argumentos();
+                    noChamada.adicionarFilho(noArgumentos);
+                }
+                
+                consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')'");
+                noChamada.adicionarFilho(new NoArvoreSintatica("FechaParentese", tokenAtual));
+                
+                return noChamada;
+            } else {
+                return new NoArvoreSintatica("Identificador", identificador);
+            }
+        } else if (verificar(TipoToken.NUMERO) || 
+                   verificar(TipoToken.DECIMAl) ||
+                   verificar(TipoToken.TEXTO) ||
+                   verificar(TipoToken.PC_VERDADEIRO) ||
+                   verificar(TipoToken.PC_FALSO) ||
+                   verificar(TipoToken.PC_NULO)) {
+            NoArvoreSintatica noLiteral = new NoArvoreSintatica("Literal", tokenAtual);
+            avancar();
+            return noLiteral;
+        } else if (verificar(TipoToken.SE_ABRE_PARENTESE)) {
+            NoArvoreSintatica noParentese = new NoArvoreSintatica("ExpressãoEntreParênteses");
+            
+            avancar();
+            noParentese.adicionarFilho(new NoArvoreSintatica("AbreParentese", tokenAtual));
+            
+            NoArvoreSintatica noExpressao = expressao();
+            noParentese.adicionarFilho(noExpressao);
+            
+            consumir(TipoToken.SE_FECHA_PARENTESE, "Esperado ')'");
+            noParentese.adicionarFilho(new NoArvoreSintatica("FechaParentese", tokenAtual));
+            
+            return noParentese;
+        } else {
+            reportarErro("Expressão primária inválida");
+            return new NoArvoreSintatica("ExpressãoInválida");
+        }
+    }
+
+    private NoArvoreSintatica argumentos() {
+        NoArvoreSintatica noArgumentos = new NoArvoreSintatica("Argumentos");
+        
+        NoArvoreSintatica noExpressao = expressao();
+        noArgumentos.adicionarFilho(noExpressao);
+        
+        while (verificar(TipoToken.SE_VIRGULA)) {
+            avancar();
+            noArgumentos.adicionarFilho(new NoArvoreSintatica("Vírgula", tokenAtual));
+            
+            noExpressao = expressao();
+            noArgumentos.adicionarFilho(noExpressao);
+        }
+        
+        return noArgumentos;
+    }
+    
+    private void salvarRelatorioEmArquivo() throws IOException {
+        ArquivoIO arquivoIO = new ArquivoIO();
+        arquivoIO.escreverArquivo("output/AnaliseSintatica.txt", relatorio.toString());
     }
 }

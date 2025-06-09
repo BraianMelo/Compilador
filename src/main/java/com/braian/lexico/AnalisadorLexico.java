@@ -6,7 +6,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import com.braian.io.AnalisadorLexicoIO;
+import com.braian.io.AnalisadoresIO;
 import com.braian.io.ArquivoIO;
 
 public class AnalisadorLexico {
@@ -19,7 +19,7 @@ public class AnalisadorLexico {
     private boolean erroEncontrado = false;
     
     private final List<Token> tokens = new ArrayList<>();
-    private final AnalisadorLexicoIO analisadorLexicoIO = new AnalisadorLexicoIO();
+    private final AnalisadoresIO analisadorLexicoIO = new AnalisadoresIO();
     private final ArquivoIO arquivoIO = new ArquivoIO();
 
     public AnalisadorLexico(String codigo) {
@@ -27,7 +27,7 @@ public class AnalisadorLexico {
     }
 
     public List<Token> analisar() throws IOException {
-        analisadorLexicoIO.imprimirInicio(); 
+        analisadorLexicoIO.imprimirCabecalho("Analisador Léxico");
 
         while (!EOF()) {
             escanearTokens();
@@ -41,10 +41,11 @@ public class AnalisadorLexico {
         }
         
         if(erroEncontrado) {
+        	analisadorLexicoIO.imprimirRodape(true);
         	throw new InputMismatchException("o código possui alguns erros léxicos!");
         }
 
-        analisadorLexicoIO.imprimirFim();
+        analisadorLexicoIO.imprimirRodape(false);
         salvarTokensEmArquivo();
 
         return tokens;

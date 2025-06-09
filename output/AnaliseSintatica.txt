@@ -1,0 +1,168 @@
+[S] Token esperado encontrado: PC_CONDICIONAL_IF ('❓') na linha 1, coluna 1
+[S] Token esperado encontrado: SE_ABRE_PARENTESE ('(') na linha 1, coluna 2
+[S] Token esperado encontrado: SE_FECHA_PARENTESE (')') na linha 1, coluna 11
+[S] Token esperado encontrado: PC_BLOCO_VERDADEIRO ('✅') na linha 1, coluna 13
+[S] Token esperado encontrado: SE_ABRE_CHAVE ('{') na linha 1, coluna 15
+[S] Token esperado encontrado: SE_FECHA_CHAVE ('}') na linha 3, coluna 1
+[S] Token esperado encontrado: SE_ABRE_CHAVE ('{') na linha 3, coluna 5
+[S] Token esperado encontrado: SE_FECHA_CHAVE ('}') na linha 5, coluna 1
+[S] Token esperado encontrado: PC_DECLARACAO_FUNCAO ('🆕') na linha 7, coluna 1
+[S] Token esperado encontrado: IDENTIFICADOR ('fatorial') na linha 7, coluna 8
+[S] Token esperado encontrado: SE_ABRE_PARENTESE ('(') na linha 7, coluna 16
+[S] Token esperado encontrado: IDENTIFICADOR ('n') na linha 7, coluna 21
+[S] Token esperado encontrado: SE_FECHA_PARENTESE (')') na linha 7, coluna 22
+[S] Token esperado encontrado: SE_ABRE_CHAVE ('{') na linha 7, coluna 24
+[S] Token esperado encontrado: PC_DECLARACAO_VARIAVEL ('☕') na linha 9, coluna 5
+[S] Token esperado encontrado: IDENTIFICADOR ('resultado') na linha 9, coluna 11
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 9, coluna 24
+[S] Token esperado encontrado: PC_DECLARACAO_VARIAVEL ('☕') na linha 10, coluna 5
+[S] Token esperado encontrado: IDENTIFICADOR ('i') na linha 10, coluna 11
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 10, coluna 16
+[S] Token esperado encontrado: PC_ESTRUTURA_WHILE ('⏳') na linha 12, coluna 5
+[S] Token esperado encontrado: SE_ABRE_PARENTESE ('(') na linha 12, coluna 7
+[S] Token esperado encontrado: SE_FECHA_PARENTESE (')') na linha 12, coluna 14
+[S] Token esperado encontrado: SE_ABRE_CHAVE ('{') na linha 12, coluna 16
+[S] Token esperado encontrado: IDENTIFICADOR ('resultado') na linha 13, coluna 9
+[S] Token esperado encontrado: OP_IGUAL ('=') na linha 13, coluna 19
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 13, coluna 34
+[S] Token esperado encontrado: IDENTIFICADOR ('i') na linha 14, coluna 9
+[S] Token esperado encontrado: OP_IGUAL ('=') na linha 14, coluna 11
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 14, coluna 18
+[S] Token esperado encontrado: SE_FECHA_CHAVE ('}') na linha 15, coluna 5
+[S] Token esperado encontrado: PC_RETORNO_FUNCAO ('🔚') na linha 17, coluna 5
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 17, coluna 17
+[S] Token esperado encontrado: SE_FECHA_CHAVE ('}') na linha 18, coluna 1
+[S] Token esperado encontrado: PC_DECLARACAO_VARIAVEL ('☕') na linha 20, coluna 1
+[S] Token esperado encontrado: IDENTIFICADOR ('numero') na linha 20, coluna 7
+[E] ERRO SINTÁTICO [Linha 21, Coluna 1]: Esperado ';'. Encontrado: PC_DECLARACAO_VARIAVEL ('☕')
+[S] Token esperado encontrado: PC_DECLARACAO_VARIAVEL ('☕') na linha 21, coluna 1
+[S] Token esperado encontrado: IDENTIFICADOR ('resultado') na linha 21, coluna 7
+[S] Token esperado encontrado: SE_FECHA_PARENTESE (')') na linha 21, coluna 34
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 21, coluna 35
+[S] Token esperado encontrado: PC_IMPRIMIR ('🖨️') na linha 22, coluna 1
+[S] Token esperado encontrado: SE_ABRE_PARENTESE ('(') na linha 22, coluna 4
+[S] Token esperado encontrado: SE_FECHA_PARENTESE (')') na linha 22, coluna 50
+[S] Token esperado encontrado: SE_PONTO_VIRGULA (';') na linha 22, coluna 51
+[S] Token esperado encontrado: EOF ('') na linha 23, coluna 1
+
+Árvore Sintática:
+Programa
+  Declarações
+    ComandoIf
+      PalavraChave: (
+      AbreParentese: 10
+      Condição
+      OperaçãoComparação
+        Literal: 10
+        Operador: ==
+        Literal: 10
+      FechaParentese: ✅
+      PalavraChave: {
+      Bloco
+        AbreChave: }
+        FechaChave: ❌
+      PalavraChave: {
+      Bloco
+        AbreChave: }
+        FechaChave: 🆕
+    DeclaraçãoFunção
+      PalavraChave: int
+      Tipo
+        TipoDado: int
+      NomeFunção: (
+      AbreParentese: int
+      Parâmetros
+        Parâmetro
+          Tipo
+            TipoDado: int
+          Identificador: )
+      FechaParentese: {
+      Bloco
+        AbreChave: ☕
+        DeclaraçãoVariável
+          PalavraChave: int
+          Tipo
+            TipoDado: int
+          Identificador: =
+          Atribuição
+            Literal: 1
+          PontoVírgula: ☕
+        DeclaraçãoVariável
+          PalavraChave: int
+          Tipo
+            TipoDado: int
+          Identificador: =
+          Atribuição
+            Literal: 1
+          PontoVírgula: ⏳
+        ComandoWhile
+          PalavraChave: (
+          AbreParentese: i
+          Condição
+          OperaçãoComparação
+            Identificador: i
+            Operador: <=
+            Identificador: n
+          FechaParentese: {
+          Bloco
+            AbreChave: resultado
+            ComandoAtribuição
+              Identificador: =
+              Operador: resultado
+              OperaçãoMultiplicativa
+                Identificador: resultado
+                Operador: *
+                Identificador: i
+              PontoVírgula: i
+            ComandoAtribuição
+              Identificador: =
+              Operador: i
+              OperaçãoAditiva
+                Identificador: i
+                Operador: +
+                Literal: 1
+              PontoVírgula: }
+            FechaChave: 🔚
+        ComandoReturn
+          PalavraChave: resultado
+          Identificador: resultado
+          PontoVírgula: }
+        FechaChave: ☕
+    DeclaraçãoVariável
+      PalavraChave: int
+      Tipo
+        TipoDado: int
+      Identificador: =
+      Atribuição
+        Literal: 5
+      PontoVírgula: ☕
+    DeclaraçãoVariável
+      PalavraChave: int
+      Tipo
+        TipoDado: int
+      Identificador: =
+      Atribuição
+        ChamadaFunção
+          Identificador: fatorial
+          AbreParentese: numero
+          Argumentos
+            Identificador: numero
+          FechaParentese: ;
+      PontoVírgula: 🖨️
+    ComandoImprimir
+      PalavraChave: (
+      AbreParentese: "O fatorial de "
+      OperaçãoAditiva
+        OperaçãoAditiva
+          OperaçãoAditiva
+            Literal: "O fatorial de "
+            Operador: +
+            Identificador: numero
+          Operador: +
+          Literal: " é "
+        Operador: +
+        Identificador: resultado
+      FechaParentese: ;
+      PontoVírgula
+
+Análise sintática concluída com erros.

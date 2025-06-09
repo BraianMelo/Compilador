@@ -2,13 +2,7 @@ package com.braian;
 
 import java.util.List;
 
-/*
- * Copyright (c) 2025 Braian Melo
- * Veja o arquivo LICENSE.txt para mais detalhes.
- */
-
-import java.util.Scanner;
-
+import com.braian.io.AnalisadoresIO;
 import com.braian.io.ArquivoIO;
 import com.braian.lexico.AnalisadorLexico;
 import com.braian.lexico.Token;
@@ -20,6 +14,7 @@ public class App {
     	
     	List<Token> listaDeTokens;
   
+    	AnalisadoresIO io = new AnalisadoresIO();
         ArquivoIO arquivoIO = new ArquivoIO();
         AnalisadorLexico lexico;
         AnalisadorSintatico sintatico;
@@ -40,8 +35,8 @@ public class App {
             
 
         } catch (Exception e) {
-            System.out.println("+ ERRO: " + e.getMessage());
-
+        	io.imprimirErro("ERRO: " + e.getMessage());
+        	io.imprimirFim();
         } finally {
             
         }

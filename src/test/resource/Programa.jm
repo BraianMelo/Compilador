@@ -17,6 +17,6 @@
     🔚 resultado;					💭 Retorna o resultado final
 }
 
-☕ int numero = 5;
+☕ int numero = 5
 ☕ int resultado = fatorial(numero);
 🖨️("O fatorial de " + numero + " é " + resultado);
